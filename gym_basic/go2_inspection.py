@@ -21,6 +21,8 @@ import time
 import os
 from PIL import Image as im
 
+# Resources
+RESOURCE_ROOT = "../dreamwaq/legged_gym/resources"
 # Simulation Constants
 DT = 1.0 / 60.0
 
@@ -63,9 +65,6 @@ ANIM_SEEK_UPPER = 2
 ANIM_SEEK_DEFAULT = 3
 ANIM_FINISHED = 4
 
-# camera
-D435 = gymapi.Vec3(0.0, 0.0, 0.0)
-D435_INDEX = 22
 # marks for camera
 AXES_GEOM = gymutil.AxesGeometry(0.1)
 # a wireframe sphere
@@ -74,29 +73,26 @@ sphere_pose = gymapi.Transform(r=sphere_rot)
 SPHERE_GEOM = gymutil.WireframeSphereGeometry(0.02, 12, 12, sphere_pose, color=(1, 1, 0))
 
 
-def get_d435(env, actor):
-    poses = gym.get_actor_rigid_body_states(env, actor, gymapi.STATE_POS)['pose']
+
+def create_egocentric_camera(env, actor_handle):
+    camera_sensor_pose = gymapi.Vec3(0.0, 0.0, 0.0)
+    CAMERA_SENSOR_INDEX = 22
+    poses = gym.get_actor_rigid_body_states(env, actor_handle, gymapi.STATE_POS)['pose']
 
     # Get pose for the handles
-    d435_handle_pose = gymapi.Transform.from_buffer(poses[D435_INDEX])
+    d435_handle_pose = gymapi.Transform.from_buffer(poses[CAMERA_SENSOR_INDEX])
     # print("pose: ", d435_handle_pose)
 
     # Offset d435 transforms to compute d435 locations
-    d435_point = d435_handle_pose.transform_point(D435)
+    d435_point = d435_handle_pose.transform_point(camera_sensor_pose)
     # print("d435 point: ", d435_point) == transition
 
     # Create transform from d435 location and d435 rotation
     egocentric_cam_transform = gymapi.Transform(d435_point, d435_handle_pose.r)
-    # global 좌표기준 rotation
-    # print("rotation: ", d435.r.to_euler_zyx()) # [ x: -89.9543738, y: 0, z: -89.9543738 ]
-    # print("transition: ", d435.p)
-    return egocentric_cam_transform
 
-def create_egocentric_camera(env, actor_handle):
-    egocentric_cam_transform = get_d435(env, actor_handle)
-    cam_box_handle = gym.get_actor_rigid_body_handle(env, actor_handle, 22)
+    cam_box_handle = gym.get_actor_rigid_body_handle(env, actor_handle, CAMERA_SENSOR_INDEX)
     cam_box_state = gym.get_actor_rigid_body_states(env, actor_handle, gymapi.STATE_POS)[-1]
-    # print("cam_box: ", cam_box_state)
+
     camera_props = gymapi.CameraProperties()
     # camera_props.horizontal_fov = 1.047197551 # 60 degree
     camera_props.width = 1280
@@ -125,17 +121,17 @@ def create_egocentric_camera(env, actor_handle):
     return egocentric_cam_handle, egocentric_cam_transform
 
 def create_ball(sim, env, fixed=False):
-    root = "../../../legged_gym/resources/"
     ball_urdf = "ball.urdf"
     asset_options = gymapi.AssetOptions()
     asset_options.fix_base_link = fixed
-    ball_asset = gym.load_asset(sim, root, ball_urdf, asset_options)
+    ball_asset = gym.load_asset(sim, ball_urdf, asset_options)
     ball_pose = gymapi.Transform()
     ball_pose.p = gymapi.Vec3(0.3, 0, 0.1)
     ball_pose.r = gymapi.Quat(0, 0, 0, 1)
     asset_name = "ball"
     # create_actor -> group: int = - 1, filter: int = - 1, segmentationId: int = 0
     ball_handle = gym.create_actor(env, ball_asset, ball_pose, asset_name, 0, 0)
+    return ball_handle
 
 
 def clamp(x, min_value, max_value):
@@ -219,7 +215,7 @@ def create_viewer(sim):
 
 
 def create_actor(sim, env, fixed=True, dof_print=False):
-    asset_root = "../../../legged_gym/resources/robots"
+    # asset_root = "dreamwaq/legged_gym/resources/"
     asset_file = asset_descriptors[0].file_name
     asset_options = gymapi.AssetOptions()
     asset_options.fix_base_link = fixed
@@ -231,8 +227,8 @@ def create_actor(sim, env, fixed=True, dof_print=False):
     # asset_options.vhacd_enabled = False
 
     # ASSET
-    print("Loading asset '%s' from '%s'" % (asset_file, asset_root))
-    robot_asset = gym.load_asset(sim, asset_root, asset_file, asset_options)
+    print("Loading asset '%s' from '%s'" % (asset_file, RESOURCE_ROOT))
+    robot_asset = gym.load_asset(sim, RESOURCE_ROOT, asset_file, asset_options)
     print_asset_info(robot_asset, "robot")
 
     # DOF PROPERTIES
@@ -304,6 +300,7 @@ def create_actor(sim, env, fixed=True, dof_print=False):
             if has_limits[i]:
                 print("    Lower   %f" % lower_limits[i])
                 print("    Upper   %f" % upper_limits[i])
+
     # ACTOR
     pose = gymapi.Transform()
     pose.p = ROBOT_POS
@@ -321,7 +318,6 @@ def create_actor(sim, env, fixed=True, dof_print=False):
 
     # Egocentric camera
     # egocentric_cam_handle, egocentric_cam_transform = create_egocentric_camera(env, robot_actor)
-
 
     return robot_asset, robot_actor, dof_props, dof_states, dof_positions, speeds # , egocentric_cam_handle, egocentric_cam_transform
 
@@ -413,9 +409,8 @@ class AssetDesc:
 
 if __name__ == "__main__":
 
-
     asset_descriptors = [
-        AssetDesc("go2/urdf/go2.urdf", True)
+        AssetDesc("robots/go2/urdf/go2.urdf", True)
     ]
 
     # 1. 시뮬레이션 객체 불러오기
@@ -440,7 +435,7 @@ if __name__ == "__main__":
     env = gym.create_env(sim, ENV_LOWER, ENV_UPPER, num_per_row)
 
     # 5. actor 만들기 (asset을 불러오고 난 후 env에 할당)
-    # create_ball(sim, env)
+    ball = create_ball(sim, env)
     robot_asset, robot_actor, dof_props, dof_states, dof_positions, speeds = create_actor(sim, env, dof_print=False, fixed=True)
 
 
