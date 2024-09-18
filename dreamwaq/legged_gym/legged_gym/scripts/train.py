@@ -64,7 +64,6 @@ def train(args):
     config_dir = task_registry.config_dir
     env_cfg_dict, train_cfg_dict = save_config(env_cfg, train_cfg, config_dir)
 
-    breakpoint()
 
     if WANDB:
         wandb.init(
