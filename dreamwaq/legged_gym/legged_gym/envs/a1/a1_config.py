@@ -196,7 +196,7 @@ class A1RoughBaseCfgPPO(A1RoughCfgPPO):
         true_vel_rms = False
         ada_boot = False
         run_name = "base"
-        experiment_name = "rough_a1"
+        experiment_name = "rough_a1_base"
 
 
 class A1RoughOracleCfg(A1RoughBaseCfg):
@@ -223,7 +223,7 @@ class A1RoughOracleCfgPPO(A1RoughBaseCfgPPO):
         true_vel_rms = False
         ada_boot = False
         run_name = "oracle"
-        experiment_name = "rough_a1"
+        experiment_name = "rough_a1_oracle"
 
 
 class A1RoughWaqCfg(A1RoughBaseCfg):
