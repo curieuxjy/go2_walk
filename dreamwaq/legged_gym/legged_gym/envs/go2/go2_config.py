@@ -122,7 +122,7 @@ class Go2RoughCfg(LeggedRobotCfg):
 
         only_positive_rewards = False  # if true negative total rewards are clipped at zero (avoids early termination problems)
         soft_dof_pos_limit = 0.9
-        base_height_target = 0.34
+        base_height_target = 0.34 # 0.25
 
         class scales(LeggedRobotCfg.rewards.scales):
             torques = -0.0002
