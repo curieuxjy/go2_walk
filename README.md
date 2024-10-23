@@ -30,6 +30,10 @@ go2_walk
   - fall recovery task: https://arxiv.org/abs/2306.12712
 - Training Log: https://wandb.ai/curieuxjy/dreamwaq
 
+
+https://github.com/user-attachments/assets/dc52a728-4099-4625-8688-c49ac8858327
+
+
 # [FYA] Part 3. `wtw`
 > Sim to Real
 - original repository: https://github.com/Teddy-Liao/walk-these-ways-go2
