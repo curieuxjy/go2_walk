@@ -39,7 +39,9 @@ https://github.com/user-attachments/assets/949ee69e-cb3d-42aa-b09d-6da41f5bc931
 
 # [FYA] Part 3. `wtw`
 > Sim to Real
+- paper: https://arxiv.org/abs/2212.03238
 - original repository: https://github.com/Teddy-Liao/walk-these-ways-go2
+- From: https://github.com/Improbable-AI/walk-these-ways
 - TODO: remove [ml-logger](https://ml-logger.readthedocs.io/en/latest/)
 
 
