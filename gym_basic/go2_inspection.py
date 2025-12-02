@@ -160,7 +160,7 @@ def create_actor(sim, env, fixed=True, dof_print=False):
     # get the limit-related slices of the DOF properties array
     stiffnesses = dof_props["stiffness"]
     dampings = dof_props["damping"]
-    armatures = dof_props["armature"]  # 전기자
+    armatures = dof_props["armature"]  # armature
     has_limits = dof_props["hasLimits"]
     lower_limits = dof_props["lower"]
     upper_limits = dof_props["upper"]
@@ -242,7 +242,7 @@ def print_any_state(sim):
     dof_state_tensor = gym.acquire_dof_state_tensor(sim)
     net_contact_forces = gym.acquire_net_contact_force_tensor(sim)
     rigid_body_states = gym.acquire_rigid_body_state_tensor(sim)
-    # get_으로 시작하는 함수는 acquire_로 시작하는 함수들의 이전 버젼
+    # Functions starting with get_ are the older version of functions starting with acquire_
 
     gym.refresh_dof_state_tensor(sim)
     gym.refresh_actor_root_state_tensor(sim)
@@ -385,7 +385,7 @@ if __name__ == "__main__":
         gym.clear_lines(viewer)
         gym.set_actor_dof_states(env, robot_actor, dof_states, gymapi.STATE_POS)
 
-        # dof 시각화
+        # DOF visualization
         dof_handle = gym.get_actor_dof_handle(env, robot_actor, current_dof)
         frame = gym.get_dof_frame(env, dof_handle)
         # draw a line from DOF origin along the DOF axis
@@ -394,12 +394,12 @@ if __name__ == "__main__":
         color = gymapi.Vec3(1.0, 0.0, 0.0)
         gymutil.draw_line(p1, p2, color, gym, viewer, env)
 
-        # 시뮬레이션 스텝 실행
+        # Execute simulation step
         gym.step_graphics(sim)
 
         print_any_state(sim)
 
-        # 뷰어 업데이트
+        # Update viewer
         gym.draw_viewer(viewer, sim, True)
         # viewer_trans = gym.get_viewer_camera_transform(viewer, env)
         # print(viewer_trans.p) # viewer position

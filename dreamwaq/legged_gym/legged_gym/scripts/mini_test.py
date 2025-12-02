@@ -1,3 +1,9 @@
+# MIT License
+# Copyright (c) 2024 Jungyeon Lee (curieuxjy)
+# https://github.com/curieuxjy
+#
+# Single agent inference test script for DreamWaQ
+
 from legged_gym import LEGGED_GYM_ROOT_DIR
 
 import numpy as np

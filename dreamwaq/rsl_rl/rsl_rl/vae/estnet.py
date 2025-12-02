@@ -1,3 +1,9 @@
+# MIT License
+# Copyright (c) 2024 Jungyeon Lee (curieuxjy)
+# https://github.com/curieuxjy
+#
+# Estimator Network (EstNet) implementation for comparison
+
 import torch
 import torch.nn as nn
 import torch.optim as optim

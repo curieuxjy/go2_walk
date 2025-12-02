@@ -1507,7 +1507,7 @@ class LeggedRobot(BaseTask):
         py = points[:, :, 1].view(-1)
 
         # px.shape = num_envs * num_heights
-        # total height_samples 안에 들어가는 포인트로 확실하게 하기 위해 clipping
+        # Clipping to ensure points fall within total height_samples
         px = torch.clip(px, 0, self.height_samples.shape[0] - 2)  # 1298
         py = torch.clip(py, 0, self.height_samples.shape[1] - 2)  # 2098
 
@@ -1522,13 +1522,13 @@ class LeggedRobot(BaseTask):
 
     def _get_feet_heights(self, env_ids=None):
         """
-        발 바로 아래에 있는 지형의 높이를 추출
+        Extract the terrain height directly below the feet
 
         Args:
             foot_position: global x, y position of feet
             env_ids:
 
-        Returns: 발 바로 아래에 있는 지형의 높이
+        Returns: Terrain height directly below the feet
 
         """
         if self.cfg.terrain.mesh_type == "plane":

@@ -1,5 +1,12 @@
 # dreamwaq
 
+> **⚠️ Unofficial Implementation** of [DreamWaQ: Learning Robust Quadrupedal Locomotion With Implicit Terrain Imagination via Deep Reinforcement Learning](https://arxiv.org/abs/2301.10602)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+**Author:** [Jungyeon Lee (curieuxjy)](https://github.com/curieuxjy)
+
+---
 
 https://github.com/curieuxjy/dreamwaq/assets/40867411/5dcea5c9-3ff3-469d-baa7-70f0852a0395
 
@@ -7,72 +14,72 @@ https://github.com/curieuxjy/dreamwaq/assets/40867411/5dcea5c9-3ff3-469d-baa7-70
 
 ## Index
 
-- [Start Manual](https://github.com/curieuxjy/dreamwaq#start-manual): 프로젝트 환경 설정과 실행 방법에 대한 내용 
-- [Main Code Structure](https://github.com/curieuxjy/dreamwaq#main-code-structure): 프로젝트 주요 코드 설명 
-- [Result Graphs](https://github.com/curieuxjy/dreamwaq#result-graphs): 프로젝트 학습 결과 그래프
-- [Result Motions](https://github.com/curieuxjy/dreamwaq#result-motions): 프로젝트 학습 결과 보행 모션 영상(Video 파트별 gif)
+- [Start Manual](https://github.com/curieuxjy/dreamwaq#start-manual): Project environment setup and execution instructions
+- [Main Code Structure](https://github.com/curieuxjy/dreamwaq#main-code-structure): Main code structure explanation
+- [Result Graphs](https://github.com/curieuxjy/dreamwaq#result-graphs): Training result graphs
+- [Result Motions](https://github.com/curieuxjy/dreamwaq#result-motions): Training result walking motion videos (gif per section)
 
 ## Start Manual
 
 ### Start **w/o** this repository
-> 이 repository와 상관없이 구현 프로젝트 초기 셋팅입니다.  이 repository를 기반으로 실행 하려면, 아래 w/ 실행 단계를 참고해주세요.  
-1. IsaacGym ver.4 설치
-2. [rsl-rl](https://github.com/leggedrobotics/rsl_rl) github에서 **zip**파일로 다운받아서 설치 `pip install -e .`
-3. [legged-gym](https://github.com/leggedrobotics/legged_gym) github에서 **zip**파일로 다운받아서 설치 `pip install -e .`
-4. wandb 등 몇가지 실험 로깅에 필요한 부분 수정(각자 계정으로 로그인해야 함) 
+> This is the initial setup for implementation project independent of this repository. To run based on this repository, please refer to the w/ execution steps below.
+1. Install IsaacGym ver.4
+2. Download [rsl-rl](https://github.com/leggedrobotics/rsl_rl) from github as **zip** file and install `pip install -e .`
+3. Download [legged-gym](https://github.com/leggedrobotics/legged_gym) from github as **zip** file and install `pip install -e .`
+4. Modify some experiment logging parts including wandb (must login with your own account)
 
 ### Start **w/** this repository
-> 이 repository를 기반으로 프로젝트를 시작할 때 아래와 같이 진행해주세요.  
+> Please follow the steps below when starting the project based on this repository.
 
-1. IsaacGym ver.4 설치 [isaac-gym 페이지](https://developer.nvidia.com/isaac-gym)
-2. `rsl-rl/` 위치에서 `pip install -e .`
-3. `legged-gym/` 위치에서 `pip install -e .`
+1. Install IsaacGym ver.4 [isaac-gym page](https://developer.nvidia.com/isaac-gym)
+2. Run `pip install -e .` in `rsl-rl/` directory
+3. Run `pip install -e .` in `legged-gym/` directory
 4. `ImportError: libpython3.8.so.1.0: cannot open shared object file: No such file or directory`
    - `export LD_LIBRARY_PATH=/home/jungyeon/anaconda3/envs/go2/lib`
 5. `pip install tensorboard wandb opencv-python`
 6. `AttributeError: module 'distutils' has no attribute 'version'`
    - `pip install setuptools==59.5.0`
    - (ref) https://github.com/pytorch/pytorch/issues/69894
-4. A1으로 Rough terrain locomotion learning 시작(아래 표 참고)
+4. Start Rough terrain locomotion learning with A1 (refer to table below)
 
 | option             | config           | critic_obs | actor_obs | memo                                               |
 |--------------------|------------------|------------|-----------|:---------------------------------------------------|
-| `--task=a1_base`   | A1RoughBaseCfg   | 45         | 45        | lin_vel을 뺀 observation                             |
+| `--task=a1_base`   | A1RoughBaseCfg   | 45         | 45        | observation without lin_vel                        |
 | `--task=a1_oracle` | A1RoughOracleCfg | 238        | 238       | true_lin_vel + privileged(d,h)                     |
 | `--task=a1_waq`    | A1RoughBaseCfg   | 238        | 64        | est_lin_vel + privileged / obs_history(timestep 5) |
 
 ### Start **w/** docker
-> 이 repository를 기반으로 docker 를 통해 시작할 때 아래와 같이 진행해주세요.
-> CUDA 12.1 이상을 지원하는 드라이버가 설치 되어있어야 합니다.
+> Please follow the steps below when starting via docker based on this repository.
+> A driver supporting CUDA 12.1 or higher must be installed.
 
-1. IsaacGym ver.4 다운로드 [isaac-gym 페이지](https://developer.nvidia.com/isaac-gym)
-2. 다운로드 받은 `IsaacGym_Preview_4_Package.tar.gz` 파일을 `asset/IsaacGym_Preview_4_Package.tar.gz` 로 이동
-3. 다음 명령어로 도커 빌드 `docker build . -t dreamwaq/dreamwaq -f docker/Dockerfile  --build-arg UID=$(id -u) --build-arg GID=$(id -g)`
-4. 다음 명령어로 도커 실행 `docker run -ti --privileged -e DISPLAY=:0 -e TERM=xterm-256color -v /tmp/.X11-unix:/tmp/.X11-unix:ro --network host -v $PWD/dreamwaq:/home/user/dreamwaq --gpus all dreamwaq/dreamwaq /usr/bin/zsh`
+1. Download IsaacGym ver.4 [isaac-gym page](https://developer.nvidia.com/isaac-gym)
+2. Move the downloaded `IsaacGym_Preview_4_Package.tar.gz` file to `asset/IsaacGym_Preview_4_Package.tar.gz`
+3. Build docker with the following command `docker build . -t dreamwaq/dreamwaq -f docker/Dockerfile  --build-arg UID=$(id -u) --build-arg GID=$(id -g)`
+4. Run docker with the following command `docker run -ti --privileged -e DISPLAY=:0 -e TERM=xterm-256color -v /tmp/.X11-unix:/tmp/.X11-unix:ro --network host -v $PWD/dreamwaq:/home/user/dreamwaq --gpus all dreamwaq/dreamwaq /usr/bin/zsh`
 
-### Command 
+### Command
 
 - training : `python train.py --task=[TASK_NAME] --headless`
-  - `--headless`: 시뮬레이터 창을 띄우지않고 학습 실행하는 코드. display가 없는 서버에서 실행시 추가하는 option.
+  - `--headless`: Option to run training without opening simulator window. Add this option when running on a server without display.
 - inferencing : `python play.py --task=[TASK_NAME] --load_run=[LOAD_FOLDER] --checkpoint=[CHECKPOINT_NUMBER]`
-  - `[LOAD_FOLDER]`: `legged_gym/logs/[task별 폴더]` 내부에 있는 파일 명. (예) `Sep04_14-24-54_waq`
-    - `[task별 폴더]`: rough_a1/rough_a1_waq/rough_a1_est
-  - `[CHECKPOINT_NUMBER]`: `[LOAD_FOLDER]`에 있는 **model_[NUMBER].pt** 파일의 번호. (예) `250`
-  - 완성된 command (예) `python play.py --task=a1_waq --load_run=Sep04_14-24-54_waq --checkpoint=250`
-  - 하나의 agent를 가까이서 보는 inferencing code: `mini_test.py` (옵션은 `play.py`와 동일)
-  - 각 inferencing script에 main loop에 조절하는 옵션들이 있으니 참고해서 True/False 조정.
-- 다른 컴퓨터에서 training 된 **model_[NUMBER].pt** 파일을 inferencing하고 싶다면,
+  - `[LOAD_FOLDER]`: Folder name inside `legged_gym/logs/[task folder]`. (e.g.) `Sep04_14-24-54_waq`
+    - `[task folder]`: rough_a1/rough_a1_waq/rough_a1_est
+  - `[CHECKPOINT_NUMBER]`: Number of **model_[NUMBER].pt** file in `[LOAD_FOLDER]`. (e.g.) `250`
+  - Complete command example: `python play.py --task=a1_waq --load_run=Sep04_14-24-54_waq --checkpoint=250`
+  - Inferencing code to view a single agent up close: `mini_test.py` (options same as `play.py`)
+  - There are adjustable options in the main loop of each inferencing script, adjust True/False as needed.
+- If you want to inference a **model_[NUMBER].pt** file trained on a different computer:
   - TRAINING **{@computer_A}** | INFERENCING **{@computer_B}**
-    1. {@computer_B} `legged_gym/logs/[task별 폴더]`에 `FOLDER_NAME`이라는 새로운 폴더를 만든 뒤,
-    2. {@computer_B} `FOLDER_NAME`에 {@computer_A}의 **model_[NUMBER].pt 파일**을 copy&paste
-    2. {@computer_B} `python play.py --task=[TASK_NAME] --load_run=[FOLDER_NAME] --checkpoint=[NUMEBR]` 로 실행.
+    1. Create a new folder named `FOLDER_NAME` in {@computer_B} `legged_gym/logs/[task folder]`
+    2. Copy & paste the **model_[NUMBER].pt file** from {@computer_A} to `FOLDER_NAME` in {@computer_B}
+    2. Run with `python play.py --task=[TASK_NAME] --load_run=[FOLDER_NAME] --checkpoint=[NUMBER]` in {@computer_B}.
 
 ## Main Code Structure
 
 
-- 프로젝트 코드들 중 중요 파일들에 대한 설명입니다. 프로젝트에서 사용된 로봇 플랫폼과 알고리즘 위주의 코드들을 선정하였으며, 실행 파일명 옆에 있는 설명을 참고해주세요.
-   - 사용 로봇 플랫폼(환경): A1
-   - 사용 학습 알고리즘: PPO
+- Explanation of important files in the project code. Files related to the robot platform and algorithms used in the project were selected. Please refer to the description next to each file name.
+   - Robot platform used (environment): A1
+   - Learning algorithm used: PPO
 
 ```
 dreamwaq
@@ -80,38 +87,38 @@ dreamwaq
 ├── legged_gym
 │   ├── legged_gym
 │   │   ├── envs
-│   │   │   ├── __init__.py: 학습 실행을 위한 환경 등록. task_registry에서 참조.
-│   │   │   ├── a1/a1_config.py: A1 플랫폼에 맞는 변수 클래스. legged_robot_config.py의 클래스 상속.
+│   │   │   ├── __init__.py: Environment registration for training execution. Referenced by task_registry.
+│   │   │   ├── a1/a1_config.py: Variable classes for A1 platform. Inherits from legged_robot_config.py classes.
 │   │   │   └── base
-│   │   │        ├── legged_robot.py: locomotion task를 위한 기본 환경 클래스. LeggedRobot Class 
-│   │   │        └── legged_robot_config.py: LeggedRobot을 위한 변수 클래스. LeggedRobotCfg Class / LeggedRobotCfgPPO Class
+│   │   │        ├── legged_robot.py: Base environment class for locomotion task. LeggedRobot Class
+│   │   │        └── legged_robot_config.py: Variable classes for LeggedRobot. LeggedRobotCfg Class / LeggedRobotCfgPPO Class
 │   │   ├── scripts
-│   │   │   ├── train.py: 학습 실행 메인 코드. wandb 설정 셋팅. (Command-training 참고)
-│   │   │   ├── play.py: 학습 완료 후 다양한 지형에서 여러 agent들의 보행 inference motion을 확인하는 코드.(Command-inference 참고)
-│   │   │   └── mini_test.py:  학습 완료 후 다양한 지형에서 여러 agent들의 보행 inference motion을 확인하는 코드.(Command-inference 참고)
+│   │   │   ├── train.py: Main training execution code. wandb settings setup. (Refer to Command-training)
+│   │   │   ├── play.py: Code to check walking inference motion of multiple agents on various terrains after training. (Refer to Command-inference)
+│   │   │   └── mini_test.py: Code to check walking inference motion of multiple agents on various terrains after training. (Refer to Command-inference)
 │   │   └── utils
-│   │       ├── logger.py: play.py나 mini_test.py에서 사용되는 matplotlib plot을 위한 코드.
-│   │       ├── task_registry.py: envs/__init__.py에 등록된 학습 환경 정보를 기반으로 환경과 알고리즘 연결 실행.
-│   │       └── terrain.py: 보행하는 지형 클래스. LeggedRobot에서 참조.
-│   │ 
-│   └── resources/robots/a1: 로봇 플랫폼에 대한 정보.(urdf&mesh)
+│   │       ├── logger.py: Code for matplotlib plot used in play.py and mini_test.py.
+│   │       ├── task_registry.py: Connects environment and algorithm based on training environment info registered in envs/__init__.py.
+│   │       └── terrain.py: Terrain class for walking. Referenced by LeggedRobot.
+│   │
+│   └── resources/robots/a1: Robot platform information (urdf&mesh)
 │
 └── rsl_rl
     └── rsl_rl
         ├── algorithms
-        │   └── ppo.py: PPO 알고리즘 코드. actor_critic.py의 Actor/Critic 클래스 사용.
+        │   └── ppo.py: PPO algorithm code. Uses Actor/Critic classes from actor_critic.py.
         ├── modules
-        │   └── actor_critic.py: Actor/Critic 클래스 코드. 
+        │   └── actor_critic.py: Actor/Critic class code.
         ├── runners
-        │   └── on_policy_runner.py: 강화학습 메인 loop(learn 함수)가 있는 OnPolicyRunner 클래스가 있는 파일. 
-        │                            Base model은 OnPolicyRunner 클래스로, DreamWaQ model은 OnPolicyRunnerWaq 클래스로,
-        │                            Estnet model은 OnPolicyRunnerEst 클래스로 학습 코드가 돌아감.
-        │                            (강화학습 main loop 앞 단계[actor/critic network 이전 단계]의 변형 에따라 클래스 구분)
+        │   └── on_policy_runner.py: File containing OnPolicyRunner class with the main RL loop (learn function).
+        │                            Base model uses OnPolicyRunner class, DreamWaQ model uses OnPolicyRunnerWaq class,
+        │                            Estnet model uses OnPolicyRunnerEst class for training code execution.
+        │                            (Classes are distinguished by modifications at the stage before the RL main loop [before actor/critic network stage])
         ├── utils
-        │   └── rms.py: CENet의 normal prior distribution 학습을 위한 Running Mean Std 클래스. 
+        │   └── rms.py: Running Mean Std class for CENet's normal prior distribution training.
         └── vae
-            ├── cenet.py: Context-Aided Estimator Network(CENet) 클래스.
-            └── estnet.py: 비교모델군인 Estimator 클래스.
+            ├── cenet.py: Context-Aided Estimator Network (CENet) class.
+            └── estnet.py: Estimator class for comparison model group.
 
 ```
 
@@ -119,29 +126,29 @@ dreamwaq
 
 ## Result Graphs
 
-약 1000 iteration 동안 학습 Reward Graph
+Reward Graph for approximately 1000 iterations of training
 
 ![](./asset/two_models_rew.png)
 
 ### DreamWaQ model
 
-- 학습 후 1개의 robot agent의 state plot
-  - 1행: base state 중 x, y 방향의 속도와 yaw 방향의 command와 실제 측정 물리량 plot
-  - 2행: CENet을 통한 예측된 estimated 속도와 실제 시뮬레이터에서 측정된 true 속도 plot
-  - 3행: estimated 속도와 true 속도의 error plot
-    - 1열: x, y, z 방향의 각 성분의 squared error
-    - 2, 3열, x, y 방향의 mean squared error
+- State plot of 1 robot agent after training
+  - Row 1: Plot of x, y direction velocity and yaw direction command vs actual measured physical quantities from base state
+  - Row 2: Plot of estimated velocity through CENet vs true velocity measured from simulator
+  - Row 3: Error plot between estimated velocity and true velocity
+    - Column 1: Squared error of each x, y, z direction component
+    - Column 2, 3: Mean squared error of x, y directions
 
 ![](./asset/a1_waq_est_vel.png)
 
 ### Base model
 
-- 학습 후 1개의 robot agent의 state plot(DreamWaQ와 달리, estimated 속도가 없으므로 plot한 그래프가 다름.)
-  - 1행: base state 중 x, y 방향의 속도와 yaw 방향의 command와 실제 측정 물리량 plot
-  - 2행 1열/2열: 1개의 joint의 위치와 속도 
-  - 2행 3열: base z 방향 속도
-  - 3행 1열: 4개 발의 contact force
-  - 3행 2/3열: 1개의 joint torque
+- State plot of 1 robot agent after training (Unlike DreamWaQ, there is no estimated velocity, so the plotted graphs are different.)
+  - Row 1: Plot of x, y direction velocity and yaw direction command vs actual measured physical quantities from base state
+  - Row 2 Column 1/2: Position and velocity of 1 joint
+  - Row 2 Column 3: Base z direction velocity
+  - Row 3 Column 1: Contact force of 4 feet
+  - Row 3 Column 2/3: Torque of 1 joint
 
 ![](./asset/a1_base_no_vel.png)
 
@@ -165,7 +172,7 @@ dreamwaq
 ### Comparative Analysis of Walking Motion Between the Reproduction Model and the Base Model
 
 > small difference: naturalness of motion
-> 
+>
 > big difference: foot stuck / unstable step
 
 - Smooth Slope(small difference)
@@ -187,5 +194,4 @@ dreamwaq
 - Discrete(big difference)
 
 ![](./asset/8.gif)
-
 

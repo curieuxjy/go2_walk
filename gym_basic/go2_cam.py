@@ -55,7 +55,7 @@ DEFAULTS = list(DEFAULT_JOINT_ANGLES.values())
 VIEWER_POS = gymapi.Vec3(1.0, 1.0, 1.0)
 TARGET_POS = gymapi.Vec3(0, 0, 0)
 
-# 지형 변수
+# Terrain variables
 TERRAIN_WIDTH = 600  # unit
 TERRAIN_LENGTH = 600  # unit
 TERRAIN_TRANS_X = -2  # [m]
@@ -65,7 +65,7 @@ STEP_WIDTH = 0.30  # [m]
 STEP_HEIGHT = -0.17  # [m]
 
 # smaller unit
-HORIZONTAL_SCALE = 0.01  # [m] -> cm 단위로 생각
+HORIZONTAL_SCALE = 0.01  # [m] -> think in cm units
 VERTICAL_SCALE = 0.01  # [m] -> UNIT
 
 # joint animation states
@@ -306,7 +306,7 @@ def create_robot_actor(sim, env, fixed=True, dof_print=False):
     # get the limit-related slices of the DOF properties array
     stiffnesses = dof_props["stiffness"]
     dampings = dof_props["damping"]
-    armatures = dof_props["armature"]  # 전기자
+    armatures = dof_props["armature"]  # armature
     has_limits = dof_props["hasLimits"]
     lower_limits = dof_props["lower"]
     upper_limits = dof_props["upper"]
@@ -391,7 +391,7 @@ def update_state(sim):
     dof_state_tensor = gym.acquire_dof_state_tensor(sim)
     net_contact_forces = gym.acquire_net_contact_force_tensor(sim)
     rigid_body_states = gym.acquire_rigid_body_state_tensor(sim)
-    # get_으로 시작하는 함수는 acquire_로 시작하는 함수들의 이전 버젼
+    # Functions starting with get_ are the older version of functions starting with acquire_
 
     gym.refresh_dof_state_tensor(sim)
     gym.refresh_actor_root_state_tensor(sim)
@@ -468,10 +468,10 @@ if __name__ == "__main__":
 
     asset_descriptors = [AssetDesc("robots/go2/urdf/go2.urdf", True)]
 
-    # 시뮬레이션 객체 불러오기
+    # Load simulation objects
     gym, sim = create_sim()
 
-    # 지형 불러오기
+    # Load terrain
     # TERRAIN
     create_plane(sim)
     # horizontal_scale = HORIZONTAL_SCALE
@@ -484,11 +484,11 @@ if __name__ == "__main__":
     # VIEWER
     viewer = create_viewer(sim)
 
-    # 환경 만들기(여러 환경을 만들때 한개의 sim 안에 env들 여러개를 만들 수 있음)
+    # Create environment (multiple envs can be created within a single sim)
     num_per_row = 1
     env = gym.create_env(sim, ENV_LOWER, ENV_UPPER, num_per_row)
 
-    # actor 만들기 (asset을 불러오고 난 후 env에 할당)
+    # Create actor (assign to env after loading asset)
     ball = create_ball(sim, env)
     (
         robot_actor,
@@ -556,7 +556,7 @@ if __name__ == "__main__":
         color = gymapi.Vec3(1.0, 0.0, 0.0)
         gymutil.draw_line(p1, p2, color, gym, viewer, env)
 
-        # 카메라 위치 표시
+        # Display camera position
         gymutil.draw_lines(AXES_GEOM, gym, viewer, env, egocentric_cam_transform)
         gymutil.draw_lines(SPHERE_GEOM, gym, viewer, env, egocentric_cam_transform)
 
@@ -564,10 +564,10 @@ if __name__ == "__main__":
 
         update_state(sim)
 
-        # 카메라 센서 실행
+        # Execute camera sensor
         gym.render_all_camera_sensors(sim)
 
-        # 일정 타임 스텝에 이미지 저장
+        # Save image at certain time steps
         if np.mod(frame_count, 100) == 0 and frame_count < 500:
             print("captured!", frame_count)
             # The gym utility to write images to disk is recommended only for RGB images.

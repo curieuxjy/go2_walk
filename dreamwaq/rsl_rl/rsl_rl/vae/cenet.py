@@ -1,3 +1,10 @@
+# MIT License
+# Copyright (c) 2024 Jungyeon Lee (curieuxjy)
+# https://github.com/curieuxjy
+#
+# Context-Aided Estimator Network (CENet) implementation
+# Unofficial implementation of DreamWaQ (https://arxiv.org/abs/2301.10602)
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -258,7 +265,7 @@ class CENet(nn.Module):
         # for est_vel_batch, true_vel_batch, est_onext_batch, true_onext_batch, mu_batch, logvar_batch in generator:
         for obs_history_batch, true_vel_batch, true_onext_batch in generator:
 
-            # model의 forward 과정이 여기에 있어야
+            # model's forward process should be here
             (
                 est_onext_batch,
                 est_vel_batch,

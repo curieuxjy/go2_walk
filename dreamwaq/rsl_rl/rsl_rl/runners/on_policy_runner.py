@@ -27,6 +27,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
+#
+# Modified by Jungyeon Lee (curieuxjy) for DreamWaQ implementation
+# Added OnPolicyRunnerWaq and OnPolicyRunnerEst classes
+# https://github.com/curieuxjy
 
 import time
 import os

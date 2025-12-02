@@ -27,6 +27,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
+#
+# Modified by Jungyeon Lee (curieuxjy) for DreamWaQ implementation
+# https://github.com/curieuxjy
 
 from legged_gym import LEGGED_GYM_ROOT_DIR
 import os

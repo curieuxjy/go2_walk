@@ -26,6 +26,8 @@ go2_walk
 
 # Part 2. `dreamwaq`
 > Rough Terrain
+- **⚠️ Unofficial Implementation** by [Jungyeon Lee (curieuxjy)](https://github.com/curieuxjy)
+- Licensed under MIT License
 - paper: https://arxiv.org/abs/2301.10602
   - fall recovery task: https://arxiv.org/abs/2306.12712
 - Training Log: https://wandb.ai/curieuxjy/dreamwaq
