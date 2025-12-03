@@ -9,10 +9,10 @@
 </p>
 
 <p align="center">
-  <a href="#part-0-gym_basic">gym_basic</a> •
-  <a href="#part-1-unitree_rl_gym">unitree_rl_gym</a> •
-  <a href="#part-2-dreamwaq">dreamwaq</a> •
-  <a href="#part-3-wtw">wtw</a>
+  <a href="#-dreamwaq-main">dreamwaq (Main)</a> •
+  <a href="#-gym_basic">gym_basic</a> •
+  <a href="#-unitree_rl_gym">unitree_rl_gym</a> •
+  <a href="#-wtw">wtw</a>
 </p>
 
 ---
@@ -21,12 +21,12 @@
 
 ```
 go2_walk/
-├── gym_basic/          # Basic IsaacGym examples
-├── unitree_rl_gym/     # Flat terrain locomotion
-├── dreamwaq/           # Rough terrain with state estimation
+├── dreamwaq/           # [Main] Rough terrain with state estimation
 │   ├── legged_gym/
 │   └── rsl_rl/
-└── wtw/                # Sim-to-Real deployment
+├── gym_basic/          # [Sub] Basic IsaacGym examples
+├── unitree_rl_gym/     # [Ref] Flat terrain locomotion
+└── wtw/                # [Ref] Sim-to-Real deployment
     ├── go2_gym/
     ├── go2_gym_learn/
     └── go2_gym_deploy/
@@ -34,27 +34,7 @@ go2_walk/
 
 ---
 
-## Part 0. `gym_basic`
-
-> **Go2 in IsaacGym**
-
-- IsaacGym ver.4 basic examples
-- Camera and joint inspection demos
-
----
-
-## Part 1. `unitree_rl_gym`
-
-> **Flat Terrain Locomotion**
-
-| | |
-|---|---|
-| Original | [unitreerobotics/unitree_rl_gym](https://github.com/unitreerobotics/unitree_rl_gym) |
-| Based on | [leggedrobotics/legged_gym](https://github.com/leggedrobotics/legged_gym) |
-
----
-
-## Part 2. `dreamwaq`
+## ⭐ `dreamwaq` (Main)
 
 > **Rough Terrain Locomotion with State Estimation**
 
@@ -64,6 +44,7 @@ go2_walk/
 |---|---|
 | Author | [Jungyeon Lee (curieuxjy)](https://github.com/curieuxjy) |
 | Paper | [DreamWaQ: Learning Robust Quadrupedal Locomotion](https://arxiv.org/abs/2301.10602) |
+| Achievement | **1st Place** at [ICRA 2023 Autonomous Quadruped Robot Challenge (QRC) Final](https://github.com/curieuxjy/Awesome_Quadrupedal_Robots/discussions/5) |
 | Related | [Fall Recovery Task](https://arxiv.org/abs/2306.12712) |
 | Training Log | [WandB Dashboard](https://wandb.ai/curieuxjy/dreamwaq) |
 
@@ -71,9 +52,29 @@ go2_walk/
 
 ---
 
-## Part 3. `wtw`
+## 📦 `gym_basic`
 
-> **Sim-to-Real Deployment** *(For Your Attention)*
+> **Go2 in IsaacGym**
+
+- IsaacGym ver.4 basic examples
+- Camera and joint inspection demos
+
+---
+
+## 📚 `unitree_rl_gym`
+
+> **Flat Terrain Locomotion** *(Reference)*
+
+| | |
+|---|---|
+| Original | [unitreerobotics/unitree_rl_gym](https://github.com/unitreerobotics/unitree_rl_gym) |
+| Based on | [leggedrobotics/legged_gym](https://github.com/leggedrobotics/legged_gym) |
+
+---
+
+## 📚 `wtw`
+
+> **Sim-to-Real Deployment** *(Reference)*
 
 | | |
 |---|---|

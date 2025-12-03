@@ -12,23 +12,34 @@ https://github.com/curieuxjy/dreamwaq/assets/40867411/5dcea5c9-3ff3-469d-baa7-70
 
 [🎥 1080 Streaming Video in YouTube](https://youtu.be/5rwFcz-lerw)
 
-## Index
+---
 
-- [Start Manual](https://github.com/curieuxjy/dreamwaq#start-manual): Project environment setup and execution instructions
-- [Main Code Structure](https://github.com/curieuxjy/dreamwaq#main-code-structure): Main code structure explanation
-- [Result Graphs](https://github.com/curieuxjy/dreamwaq#result-graphs): Training result graphs
-- [Result Motions](https://github.com/curieuxjy/dreamwaq#result-motions): Training result walking motion videos (gif per section)
+## Table of Contents
+
+| Section | Description |
+|---------|-------------|
+| [Start Manual](#start-manual) | Project environment setup and execution instructions |
+| [Main Code Structure](#main-code-structure) | Main code structure explanation |
+| [Result Graphs](#result-graphs) | Training result graphs |
+| [Result Motions](#result-motions) | Training result walking motion videos (gif per section) |
+
+---
 
 ## Start Manual
 
 ### Start **w/o** this repository
+
 > This is the initial setup for implementation project independent of this repository. To run based on this repository, please refer to the w/ execution steps below.
+
 1. Install IsaacGym ver.4
 2. Download [rsl-rl](https://github.com/leggedrobotics/rsl_rl) from github as **zip** file and install `pip install -e .`
 3. Download [legged-gym](https://github.com/leggedrobotics/legged_gym) from github as **zip** file and install `pip install -e .`
 4. Modify some experiment logging parts including wandb (must login with your own account)
 
+---
+
 ### Start **w/** this repository
+
 > Please follow the steps below when starting the project based on this repository.
 
 1. Install IsaacGym ver.4 [isaac-gym page](https://developer.nvidia.com/isaac-gym)
@@ -42,40 +53,77 @@ https://github.com/curieuxjy/dreamwaq/assets/40867411/5dcea5c9-3ff3-469d-baa7-70
    - (ref) https://github.com/pytorch/pytorch/issues/69894
 4. Start Rough terrain locomotion learning with A1 (refer to table below)
 
-| option             | config           | critic_obs | actor_obs | memo                                               |
-|--------------------|------------------|------------|-----------|:---------------------------------------------------|
-| `--task=a1_base`   | A1RoughBaseCfg   | 45         | 45        | observation without lin_vel                        |
-| `--task=a1_oracle` | A1RoughOracleCfg | 238        | 238       | true_lin_vel + privileged(d,h)                     |
-| `--task=a1_waq`    | A1RoughBaseCfg   | 238        | 64        | est_lin_vel + privileged / obs_history(timestep 5) |
+#### Task Options
+
+| Option | Config | Critic Obs | Actor Obs | Memo |
+|--------|--------|:----------:|:---------:|------|
+| `--task=a1_base` | A1RoughBaseCfg | 45 | 45 | observation without lin_vel |
+| `--task=a1_oracle` | A1RoughOracleCfg | 238 | 238 | true_lin_vel + privileged(d,h) |
+| `--task=a1_waq` | A1RoughBaseCfg | 238 | 64 | est_lin_vel + privileged / obs_history(timestep 5) |
+
+---
 
 ### Start **w/** docker
+
 > Please follow the steps below when starting via docker based on this repository.
 > A driver supporting CUDA 12.1 or higher must be installed.
 
 1. Download IsaacGym ver.4 [isaac-gym page](https://developer.nvidia.com/isaac-gym)
 2. Move the downloaded `IsaacGym_Preview_4_Package.tar.gz` file to `asset/IsaacGym_Preview_4_Package.tar.gz`
-3. Build docker with the following command `docker build . -t dreamwaq/dreamwaq -f docker/Dockerfile  --build-arg UID=$(id -u) --build-arg GID=$(id -g)`
-4. Run docker with the following command `docker run -ti --privileged -e DISPLAY=:0 -e TERM=xterm-256color -v /tmp/.X11-unix:/tmp/.X11-unix:ro --network host -v $PWD/dreamwaq:/home/user/dreamwaq --gpus all dreamwaq/dreamwaq /usr/bin/zsh`
+3. Build docker with the following command:
+   ```bash
+   docker build . -t dreamwaq/dreamwaq -f docker/Dockerfile  --build-arg UID=$(id -u) --build-arg GID=$(id -g)
+   ```
+4. Run docker with the following command:
+   ```bash
+   docker run -ti --privileged -e DISPLAY=:0 -e TERM=xterm-256color -v /tmp/.X11-unix:/tmp/.X11-unix:ro --network host -v $PWD/dreamwaq:/home/user/dreamwaq --gpus all dreamwaq/dreamwaq /usr/bin/zsh
+   ```
+
+---
 
 ### Command
 
-- training : `python train.py --task=[TASK_NAME] --headless`
-  - `--headless`: Option to run training without opening simulator window. Add this option when running on a server without display.
-- inferencing : `python play.py --task=[TASK_NAME] --load_run=[LOAD_FOLDER] --checkpoint=[CHECKPOINT_NUMBER]`
-  - `[LOAD_FOLDER]`: Folder name inside `legged_gym/logs/[task folder]`. (e.g.) `Sep04_14-24-54_waq`
-    - `[task folder]`: rough_a1/rough_a1_waq/rough_a1_est
-  - `[CHECKPOINT_NUMBER]`: Number of **model_[NUMBER].pt** file in `[LOAD_FOLDER]`. (e.g.) `250`
-  - Complete command example: `python play.py --task=a1_waq --load_run=Sep04_14-24-54_waq --checkpoint=250`
-  - Inferencing code to view a single agent up close: `mini_test.py` (options same as `play.py`)
-  - There are adjustable options in the main loop of each inferencing script, adjust True/False as needed.
-- If you want to inference a **model_[NUMBER].pt** file trained on a different computer:
-  - TRAINING **{@computer_A}** | INFERENCING **{@computer_B}**
-    1. Create a new folder named `FOLDER_NAME` in {@computer_B} `legged_gym/logs/[task folder]`
-    2. Copy & paste the **model_[NUMBER].pt file** from {@computer_A} to `FOLDER_NAME` in {@computer_B}
-    2. Run with `python play.py --task=[TASK_NAME] --load_run=[FOLDER_NAME] --checkpoint=[NUMBER]` in {@computer_B}.
+#### Training
+
+```bash
+python train.py --task=[TASK_NAME] --headless
+```
+
+- `--headless`: Option to run training without opening simulator window. Add this option when running on a server without display.
+
+#### Inferencing
+
+```bash
+python play.py --task=[TASK_NAME] --load_run=[LOAD_FOLDER] --checkpoint=[CHECKPOINT_NUMBER]
+```
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `[LOAD_FOLDER]` | Folder name inside `legged_gym/logs/[task folder]` | `Sep04_14-24-54_waq` |
+| `[task folder]` | Task-specific log folder | `rough_a1/rough_a1_waq/rough_a1_est` |
+| `[CHECKPOINT_NUMBER]` | Number of **model_[NUMBER].pt** file | `250` |
+
+**Complete command example:**
+```bash
+python play.py --task=a1_waq --load_run=Sep04_14-24-54_waq --checkpoint=250
+```
+
+- Inferencing code to view a single agent up close: `mini_test.py` (options same as `play.py`)
+- There are adjustable options in the main loop of each inferencing script, adjust True/False as needed.
+
+#### Cross-computer Inference
+
+If you want to inference a **model_[NUMBER].pt** file trained on a different computer:
+
+| Step | Computer A (Training) | Computer B (Inferencing) |
+|------|----------------------|--------------------------|
+| 1 | - | Create a new folder named `FOLDER_NAME` in `legged_gym/logs/[task folder]` |
+| 2 | Copy **model_[NUMBER].pt** | Paste to `FOLDER_NAME` |
+| 3 | - | Run `python play.py --task=[TASK_NAME] --load_run=[FOLDER_NAME] --checkpoint=[NUMBER]` |
+
+---
 
 ## Main Code Structure
-
 
 - Explanation of important files in the project code. Files related to the robot platform and algorithms used in the project were selected. Please refer to the description next to each file name.
    - Robot platform used (environment): A1
@@ -122,7 +170,7 @@ dreamwaq
 
 ```
 
-
+---
 
 ## Result Graphs
 
@@ -152,9 +200,14 @@ Reward Graph for approximately 1000 iterations of training
 
 ![](./asset/a1_base_no_vel.png)
 
+---
+
 ## Result Motions
 
+> **Notice:** The videos below were recorded using the **A1 platform**. However, this repository also includes code for applying the algorithm to the **Go2 platform**.
+
 ### Walking Performance of a Reproduction Model in Different Terrains
+
 - Smooth Slope / Rough Slope
 
 ![](./asset/1.gif)
@@ -167,7 +220,7 @@ Reward Graph for approximately 1000 iterations of training
 
 ![](./asset/3.gif)
 
-
+---
 
 ### Comparative Analysis of Walking Motion Between the Reproduction Model and the Base Model
 
@@ -194,4 +247,3 @@ Reward Graph for approximately 1000 iterations of training
 - Discrete(big difference)
 
 ![](./asset/8.gif)
-
